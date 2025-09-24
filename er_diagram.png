@@ -1,0 +1,70 @@
+// ERD para <mysql.connector.connection_cext.CMySQLConnection object at 0x0000015742426660>
+digraph {
+	node [shape=box]
+	"\"address\""
+	"\"city\""
+	"\"address\"" -> "\"city\"" [label="\"city_id\" → \"city_id\""]
+	"\"city\""
+	"\"country\""
+	"\"city\"" -> "\"country\"" [label="\"country_id\" → \"country_id\""]
+	"\"customer\""
+	"\"address\""
+	"\"customer\"" -> "\"address\"" [label="\"address_id\" → \"address_id\""]
+	"\"customer\""
+	"\"store\""
+	"\"customer\"" -> "\"store\"" [label="\"store_id\" → \"store_id\""]
+	"\"film\""
+	"\"language\""
+	"\"film\"" -> "\"language\"" [label="\"language_id\" → \"language_id\""]
+	"\"film\""
+	"\"language\""
+	"\"film\"" -> "\"language\"" [label="\"original_language_id\" → \"language_id\""]
+	"\"film_actor\""
+	"\"actor\""
+	"\"film_actor\"" -> "\"actor\"" [label="\"actor_id\" → \"actor_id\""]
+	"\"film_actor\""
+	"\"film\""
+	"\"film_actor\"" -> "\"film\"" [label="\"film_id\" → \"film_id\""]
+	"\"film_category\""
+	"\"category\""
+	"\"film_category\"" -> "\"category\"" [label="\"category_id\" → \"category_id\""]
+	"\"film_category\""
+	"\"film\""
+	"\"film_category\"" -> "\"film\"" [label="\"film_id\" → \"film_id\""]
+	"\"inventory\""
+	"\"film\""
+	"\"inventory\"" -> "\"film\"" [label="\"film_id\" → \"film_id\""]
+	"\"inventory\""
+	"\"store\""
+	"\"inventory\"" -> "\"store\"" [label="\"store_id\" → \"store_id\""]
+	"\"payment\""
+	"\"customer\""
+	"\"payment\"" -> "\"customer\"" [label="\"customer_id\" → \"customer_id\""]
+	"\"payment\""
+	"\"rental\""
+	"\"payment\"" -> "\"rental\"" [label="\"rental_id\" → \"rental_id\""]
+	"\"payment\""
+	"\"staff\""
+	"\"payment\"" -> "\"staff\"" [label="\"staff_id\" → \"staff_id\""]
+	"\"rental\""
+	"\"customer\""
+	"\"rental\"" -> "\"customer\"" [label="\"customer_id\" → \"customer_id\""]
+	"\"rental\""
+	"\"inventory\""
+	"\"rental\"" -> "\"inventory\"" [label="\"inventory_id\" → \"inventory_id\""]
+	"\"rental\""
+	"\"staff\""
+	"\"rental\"" -> "\"staff\"" [label="\"staff_id\" → \"staff_id\""]
+	"\"staff\""
+	"\"address\""
+	"\"staff\"" -> "\"address\"" [label="\"address_id\" → \"address_id\""]
+	"\"staff\""
+	"\"store\""
+	"\"staff\"" -> "\"store\"" [label="\"store_id\" → \"store_id\""]
+	"\"store\""
+	"\"address\""
+	"\"store\"" -> "\"address\"" [label="\"address_id\" → \"address_id\""]
+	"\"store\""
+	"\"staff\""
+	"\"store\"" -> "\"staff\"" [label="\"manager_staff_id\" → \"staff_id\""]
+}

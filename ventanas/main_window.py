@@ -3,6 +3,7 @@ from tkinter import N, S, W, E
 from tkinter import ttk, messagebox
 from ventanas.conexion_window import conexion_window
 from ventanas.edit_con_window import  edit_window
+from ventanas.erd_window import gen_erd_window
 from db.connection import ConnectionManager as cm
 from db.querries import query
 from db.export import export
@@ -279,6 +280,7 @@ def main_window():
             confirm = messagebox.askyesno("Confirmar", f"¿Desea exportar {selected[0]} a PostgreSQL?")
             if confirm:
                 export(conn_manager.get_conexion(selected[0]))
+                
 
     def ejecutar_en_conexion():
         for item in result.get_children():
@@ -317,6 +319,7 @@ def main_window():
                 if "_tab_" in item_id:
                     n, item = item_id.split("_tab_")
                     menu.add_command(label="Ver DDL", command=lambda: gen_ddl(item, "table", n))
+                    menu.add_command(label="Ver ERD", command=lambda: gen_erd(n))
                 menu.post(event.x_root, event.y_root)
             if "_vis" in item_id:
                 menu.add_command(label="Crear vista")
@@ -353,6 +356,11 @@ def main_window():
             command.insert("1.0", ddl[0][1])
         notebook.select(sql_editor)
         return
+    
+    def gen_erd(con):
+        connect = conn_manager.get_conexion(con)
+        gen_erd_window(connect)
+
     
     def ver_datos(item, con):
         for item in result.get_children():

@@ -139,11 +139,6 @@ def export(conexion):
 
             f.write(ddl)
 
-
-            
-
-            
-
         #AGREGAR LAS LLAVES FORANEAS
         for constraint_name, entries in foraneas.items():
             for entry in entries:
@@ -162,6 +157,35 @@ def export(conexion):
 
             ddl = f"CREATE {unique}INDEX {id_name} ON {table}({columnas});\n\n"
             f.write(ddl)
+
+        #AGREGAR LAS VIEWS
+        view_col, view_row = query(conexion, f"SHOW FULL TABLES WHERE Table_type='VIEW';")
+        for vr in view_row:
+            view_name = vr[view_col[0]]
+            ddl_col, ddl_row = query(conexion, f"SHOW CREATE VIEW {view_name}")
+            sql = ddl_row[0][ddl_col[1]]
+            if 'group_concat(distinct' in sql:
+                continue
+            options, select = sql.split('select', 1)
+            select = select.replace('`', '"')
+            select = select.replace('group_concat', 'STRING_AGG')
+            select = select.replace('_utf8mb4', '')
+            select = select.replace('separator', ',')
+
+            pattern = re.compile(r"IF\s*\(([^,]+),([^,]+),([^)]+)\)", re.IGNORECASE)
+            while True:
+                m = pattern.search(select)
+                if not m:
+                    break
+                cond, val_true, val_false = m.groups()
+                case_expr = f"(CASE WHEN {cond.strip()} THEN {val_true.strip()} ELSE {val_false.strip()} END)"
+                select = select[:m.start()] + case_expr + select[m.end():]
+
+            ddl = f"CREATE OR REPLACE VIEW {view_name} AS \n  SELECT {select};"
+            
+            f.write(ddl + "\n\n")
+
+
 
 
         # for index_name, entries in indexes.items():
