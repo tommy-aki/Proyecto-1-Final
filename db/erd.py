@@ -14,10 +14,10 @@ def gen_erd(conexion):
         # print(pattern)
         for constraint, lcol, rtab, rcol in pattern:
             foraneas[constraint].append({
-                "table" : f"\"{table_name}\"",
-                "lcol": lcol.replace('`', '"'),
-                "rtab" : f"\"{rtab}\"",
-                "rcol":rcol.replace('`', '"')
+                "table" : table_name.replace('`', '').replace(' ', '_').upper(),
+                "lcol": lcol.replace('`', '').replace(' ', '_'),
+                "rtab" : rtab.replace('`', '').replace(' ', '_').upper(),
+                "rcol":rcol.replace('`', '').replace(' ', '_')
                     })
     
     return foraneas

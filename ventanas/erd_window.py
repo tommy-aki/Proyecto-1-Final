@@ -1,26 +1,39 @@
-import os
-from pathlib import Path
-from db.erd import gen_erd
-from graphviz import Digraph
-import graphviz
 
-def gen_erd_window(conexion, filename="er_diagram"):
-    # Ruta relativa al ejecutable dentro del proyecto
-    dot_dir = Path(__file__).parent.parent / "graphviz" / "bin"
-    os.environ["PATH"] = str(dot_dir) + os.pathsep + os.environ["PATH"]
+import webview
+from db.erd import gen_erd 
+from mermaid import Mermaid 
+from mermaid.graph import Graph 
 
-
-    dot = Digraph(comment = f"ERD para {conexion}", format = "png")
-    dot.attr('node', shape='box') 
+def gen_erd_window(conexion, filename="er_diagram"): 
     fks = gen_erd(conexion)
+    mermaid_code = "erDiagram\n"
     for _, refs in fks.items():
         for ref in refs:
             table = ref["table"]
             rtab = ref["rtab"]
-            label = f'{ref["lcol"]} → {ref["rcol"]}'
-            dot.node(table)
-            dot.node(rtab)
-            dot.edge(table, rtab, label=label)
+            lcol = ref["lcol"]
+            rcol = ref["rcol"]
 
-    dot.render(filename, cleanup=True)
-    return filename
+            mermaid_code += f"    {table} ||--o" + "{ " + f"{rtab} : \"{lcol} → {rcol}\"\n"
+
+    print(mermaid_code)
+
+    html_content = f"""
+    <html>
+    <head>
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({{ startOnLoad: true }});
+        </script>
+    </head>
+    <body>
+        <div class="mermaid">
+            {mermaid_code}
+        </div>
+    </body>
+    </html>
+    """
+
+
+    webview.create_window("Diagrama ER", html=html_content)
+    webview.start()

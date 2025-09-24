@@ -359,7 +359,7 @@ def main_window():
     
     def gen_erd(con):
         connect = conn_manager.get_conexion(con)
-        gen_erd_window(connect)
+        gen_erd_window(connect, notebook)
 
     
     def ver_datos(item, con):
