@@ -6,6 +6,7 @@ from db.querries import query
 def gen_erd(conexion):
     table_cols, table_rows = query(conexion, f"SHOW FULL TABLES WHERE Table_type='BASE TABLE';")
     foraneas = defaultdict(list)
+    columns = defaultdict(list)
     for row in table_rows:
         table_name = row[table_cols[0]]
         
@@ -19,6 +20,17 @@ def gen_erd(conexion):
                 "rtab" : rtab.replace('`', '').replace(' ', '_').upper(),
                 "rcol":rcol.replace('`', '').replace(' ', '_')
                     })
+        
+        columns_cols, columns_rows = query(conexion, f"SHOW COLUMNS FROM `{table_name}`")
+        for row in columns_rows:
+            name = row[columns_cols[0]]
+            type__ = row[columns_cols[1]].upper()
+            if '(' in type__:
+                type__, _ = type__.split('(', 1)
+            columns[table_name].append({
+                "type" : type__.replace(' ', '_'),
+                "name" : name.replace(' ', '_')
+            })
     
-    return foraneas
+    return foraneas, columns
 

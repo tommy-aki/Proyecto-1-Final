@@ -5,8 +5,15 @@ from mermaid import Mermaid
 from mermaid.graph import Graph 
 
 def gen_erd_window(conexion, filename="er_diagram"): 
-    fks = gen_erd(conexion)
+    fks, cols = gen_erd(conexion)
     mermaid_code = "erDiagram\n"
+    for table_n, refs in cols.items():
+        mermaid_code += f"    {table_n.upper()} " + "{\n"
+        for ref in refs:
+            type_ = ref['type']
+            name = ref['name']
+            mermaid_code += f"       {type_} {name}\n"
+        mermaid_code += "    }\n"
     for _, refs in fks.items():
         for ref in refs:
             table = ref["table"]
@@ -15,6 +22,9 @@ def gen_erd_window(conexion, filename="er_diagram"):
             rcol = ref["rcol"]
 
             mermaid_code += f"    {table} ||--o" + "{ " + f"{rtab} : \"{lcol} → {rcol}\"\n"
+
+
+
 
     print(mermaid_code)
 
