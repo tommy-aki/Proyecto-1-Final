@@ -84,21 +84,21 @@ Hubo 3 objetos que no se pudieron incluir:
 - PyWebView: Librería de python para crear views con HTML con soporte para Scripts
 
 # ESTRUCTURA
-Proyecto_Final
-    /db
-        connection.py
-        querries.py
-        erd.py                  // encargada de generar los diccionarios para el diagrama
-        export.py               // encargada de syncronizar los datos
-    /Graphviz                   // ejecutable de graphviz (Inutilizado)
-    /ventanas
-        conexion_window.py
-        edit_con_window.py
-        erd_window.py           // ventana que crea y muestra el diagrama ER
-        sync_window.py          // ventana que pide los datos de conexión PostgreSQL
-        main_window.py
-    main.py
-    README.md
+    Proyecto_Final
+        /db
+            connection.py
+            querries.py
+            erd.py                  // encargada de generar los diccionarios para el diagrama
+            export.py               // encargada de syncronizar los datos
+        /Graphviz                   // ejecutable de graphviz (Inutilizado)
+        /ventanas
+            conexion_window.py
+            edit_con_window.py
+            erd_window.py           // ventana que crea y muestra el diagrama ER
+            sync_window.py          // ventana que pide los datos de conexión PostgreSQL
+            main_window.py
+        main.py
+        README.md
 
 # CARACTERÍSTICAS
 - Sincronización con base de datos PostgreSQL
