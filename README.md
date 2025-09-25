@@ -59,7 +59,7 @@ Hubo 3 objetos que no se pudieron incluir:
 1.  MySQL no maneja secuencias ni paquetes. Por ende, no hay comando para mostrarlos.
 2.  MySQL no tiene forma de mostrar los usuarios mediante comandos SHOW. MySQL  obtiene sus usuarios mediante Information Schema.
 3.  Debido a la decisión técnia del principio, mi gestor no muestra las bases de datos o tablespaces, pues se define al momento de crear o editar la conexión.
-
+ 
 
 ## Para ver el DDL de los objetos:
 1.  Abrir completamente los nodos.
@@ -73,3 +73,45 @@ Hubo 3 objetos que no se pudieron incluir:
 2.  En la ventana grande, debajo de donde dice "Consola SQL:", escribir la sentencia SQL deseada.
 3.  Al terminar la sentencia, dar clic en el botón "EJECUTAR"
 4.  Arriba de esa ventana, se mostrará el resultado. Si la sentencia fue un SELECT, mostrará la tabla de resultado. Si fue un UPDATE, DELETE, o CREATE, un mensaje de confirmación de la sentencia se verá reflejado indicando el número de filas alteradas
+
+
+-----------------------------------------------------------------------------------------------------------
+# Parte 2
+
+# Tecnologías
+- Psycopg2: Librería de Python para conectar con bases de datos PostgreSQL.
+- Mermaid/IPython: Librería para crear diagramas de entidad-relación usado para generar el diagrama.
+- PyWebView: Librería de python para crear views con HTML con soporte para Scripts
+
+# ESTRUCTURA
+Proyecto_Final
+    /db
+        connection.py
+        querries.py
+        erd.py                  // encargada de generar los diccionarios para el diagrama
+        export.py               // encargada de syncronizar los datos
+    /Graphviz                   // ejecutable de graphviz (Inutilizado)
+    /ventanas
+        conexion_window.py
+        edit_con_window.py
+        erd_window.py           // ventana que crea y muestra el diagrama ER
+        sync_window.py          // ventana que pide los datos de conexión PostgreSQL
+        main_window.py
+    main.py
+    README.md
+
+# CARACTERÍSTICAS
+- Sincronización con base de datos PostgreSQL
+- Crear diagrama de Entidad Relación
+
+# USO
+
+## Para crear sincronizar con bases de datos PostgreSQL
+1.  Con una conexión seleccionada, click en Conexión
+2.  En el submenu, dar click a "Exportar a PostgreSQL". Abrirá una nueva ventana.
+3.  Llenar con los datos requeridos y dar click en el botón Conectar. Un mensaje de confirmación aparecerá y será dirigido a la ventana principal, con la base de datos ya sincronizada
+
+## Para ver el diagrama ERD
+1.  Abrir una conexión y  click derecho sobre una tabla
+2.  En el submenu, seleccionar la opción "Ver ERD"
+3.  Abrirá una ventana nueva en la que podrá ver el diagrama con la tablas, llaves foráneas y columnas
