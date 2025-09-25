@@ -21,7 +21,8 @@ type_dict = {
     "GEOMETRY" : "TEXT" # Tipo que ocupa una libreria
 }
 
-def export(conexion):  
+def export(conexion, con_pg):  
+    cur_pg = con_pg.cursor()
     with open("PGDDL.sql", "w") as f:  
         cols, rows = query(conexion, f"SHOW FULL TABLES WHERE Table_type='BASE TABLE';")
         indexes = defaultdict(list)
@@ -32,7 +33,7 @@ def export(conexion):
         for row in rows:
             primary_keys = []
             table_name = row[cols[0]]
-            ddl = f"CREATE TABLE \"{table_name}\"(\n"
+            ddl = f"DROP TABLE IF EXISTS \"{table_name}\" CASCADE;\nCREATE TABLE \"{table_name}\"(\n"
             ccol, crow = query(conexion, f"SHOW COLUMNS FROM `{table_name}`;")
 
             newCols = []
@@ -71,7 +72,12 @@ def export(conexion):
             else:
                 pk_str = ""
             ddl += "  " + ",\n  ".join(column_defs) + pk_str + "\n);\n\n"
-            f.write(ddl) 
+
+            #f.write(ddl) 
+            try:
+                cur_pg.execute(ddl)
+            except Exception as e:
+                print(f"Error creando tabla {table_name}: {e}")
 
             #OBTENER TODOS LOS CONSTRAINTS DE LLAVE FORANEA
             cccol, ccrow = query(conexion, f"SHOW CREATE TABLE `{table_name}`")
@@ -96,7 +102,7 @@ def export(conexion):
                     indexes[r[icol[2]]].append({
                         "table": f"\"{table_name}\"",
                         "column": f"\"{r[icol[4]]}\"",
-                        "unique": r[icol[1]]
+                        "non_unique": r[icol[1]]
                     })
 
             #OBTENER LOS DATOS
@@ -137,7 +143,11 @@ def export(conexion):
                 values.append(valstr)
             ddl += ',\n'.join(values) + ";\n\n"
 
-            f.write(ddl)
+            #f.write(ddl)
+            try:
+                cur_pg.execute(ddl)
+            except Exception as e:
+                print(f"Error insertando en la tabla {table_name}: {e}")
 
         #AGREGAR LAS LLAVES FORANEAS
         for constraint_name, entries in foraneas.items():
@@ -147,16 +157,26 @@ def export(conexion):
   ADD CONSTRAINT {constraint_name}
   FOREIGN KEY ({entry["lcol"]})
   REFERENCES {entry["rtab"]}({entry["rcol"]});\n\n"""
-                f.write(ddl)
+                #f.write(ddl)
+                try:
+                    cur_pg.execute(ddl)
+                except Exception as e:
+                    print(f"Error agregando constraints para la tabla {entry["table"]}: {e}")
 
         #AGREGAR LOS INDICES
         for id_name, entries in indexes.items():
             table = entries[0]["table"] 
             columnas = ", ".join(entry["column"] for entry in entries)
-            unique = "UNIQUE " if entries[0]["unique"] == 0 else ""
+            unique = "UNIQUE " if entries[0]["non_unique"] == 0 else ""
 
             ddl = f"CREATE {unique}INDEX {id_name} ON {table}({columnas});\n\n"
-            f.write(ddl)
+            # f.write(ddl)
+            try:
+                cur_pg.execute(ddl)
+                con_pg.commit()
+            except Exception as e:
+                con_pg.rollback()
+                print(f"Warning: no se pudo crear el índice {id_name} en {table}: {e}")
 
         #AGREGAR LAS VIEWS
         view_col, view_row = query(conexion, f"SHOW FULL TABLES WHERE Table_type='VIEW';")
@@ -183,7 +203,14 @@ def export(conexion):
 
             ddl = f"CREATE OR REPLACE VIEW {view_name} AS \n  SELECT {select};"
             
-            f.write(ddl + "\n\n")
+            #f.write(ddl + "\n\n")
+            try:
+                cur_pg.execute(ddl)
+            except Exception as e:
+                print(f"Error creando view {view_name}: {e}")
+
+        con_pg.commit()
+        cur_pg.close()
 
 
 

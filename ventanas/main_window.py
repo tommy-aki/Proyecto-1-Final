@@ -3,6 +3,7 @@ from tkinter import N, S, W, E
 from tkinter import ttk, messagebox
 from ventanas.conexion_window import conexion_window
 from ventanas.edit_con_window import  edit_window
+from ventanas.sync_window import sync_window
 from ventanas.erd_window import gen_erd_window
 from db.connection import ConnectionManager as cm
 from db.querries import query
@@ -279,7 +280,7 @@ def main_window():
         if selected:
             confirm = messagebox.askyesno("Confirmar", f"¿Desea exportar {selected[0]} a PostgreSQL?")
             if confirm:
-                export(conn_manager.get_conexion(selected[0]))
+                sync_window(conn_manager.get_conexion(selected[0]))
                 
 
     def ejecutar_en_conexion():
